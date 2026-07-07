@@ -1,17 +1,16 @@
 #pragma once
-
-enum GateEvent {
-    GATE_NONE,
-    GATE_OPENED,
-    GATE_CLOSED
-};
+#include <Servo.h>
+#include <Arduino.h>
 
 void initGate();
 
-GateEvent updateEntrance(bool parkingFull);
+void updateEntrance(bool parkingFull);
 
-GateEvent updateExit();
+void updateExit();
 
 void openAllGate();
 
 void closeAllGate();
+
+void openGate(Servo &gate);
+void closeGate(Servo &gate);

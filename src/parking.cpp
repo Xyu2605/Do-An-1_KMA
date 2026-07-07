@@ -34,35 +34,6 @@ void updateParking() {
     }
 }
 
-int getEnteredSlot(){
-
-    for(int i=1; i < MAX_SLOT; i++){
-        if(!lastSlotState[i] && slotState[i]){
-            return i;
-        }
-    }
-
-    return -1;
-}
-
-int getExitedSlot(){
-
-    for (int i = 0; i < MAX_SLOT; i++){
-        if (lastSlotState[i] && !slotState[i])
-            return i;
-    }
-
-    return -1;
-}
-
-int getCarCount() {
-    return carCount;
-}
-
-int getFreeSlot() {
-    return MAX_SLOT - carCount;
-}
-
 bool isParkingFull() {
     return carCount >= MAX_SLOT;
 }

@@ -6,6 +6,8 @@
 #include "lcd_display.h"
 #include "gate.h"
 
+bool wasFireDetected = false; 
+
 void setup() {
     Serial.begin(9600);
     initLCD();
@@ -19,24 +21,28 @@ void loop(){
     updateFireAlarm();
     updateParking();
 
-    if (isFireDetected()){
+    bool fireNow = isFireDetected();
+
+    if (fireNow){
+        
         openAllGate();
         showFireAlarm();
+        delay(2000);
     }
     else {
+        if (wasFireDetected){
+            closeAllGate();
+        }
+
         updateEntrance(isParkingFull());
         updateExit();
 
         if (isParkingFull()){
             showParkingFull();
         }
-        else if (getEnteredSlot() != -1){
-            showWelcome();
-        }
-        else if (getExitedSlot() != -1){
-            showGoodBye();
-        }
     }
+
+    wasFireDetected = fireNow;
 
     updateLCD();
 }

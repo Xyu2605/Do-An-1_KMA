@@ -1,19 +1,11 @@
 #include "gate.h"
 #include "config.h"
+#include "lcd_display.h"
 #include <Arduino.h>
 #include <Servo.h>
 
 Servo gateIn;
 Servo gateOut;
-
-enum GateState{
-
-    WAIT_CAR,
-    GATE_OPEN,
-};
-
-GateState inState = WAIT_CAR;
-GateState outState = WAIT_CAR;
 
 void initGate(){
 
@@ -47,81 +39,62 @@ float getDistance(int trigPin, int echoPin) {
     return duration * 0.0343 / 2.0;
 }
 
-GateEvent updateEntrance(bool parkingFull)
-{
+void updateEntrance(bool parkingFull) {
+
     float d = getDistance(TRIG_IN, ECHO_IN);
 
-    switch (inState)
-    {
-        case WAIT_CAR:
+    if (d < OPEN_DISTANCE && !parkingFull){
+        Serial.println("Open Entrance");
+        
+        for (int pos = GATE_ANGLE; pos >= 0; pos--){
+            gateIn.write(pos);
+            delay(10);
+        }
+        
+        showWelcome();
+        updateLCD(); 
+        delay(3000);
 
-            if (d < OPEN_DISTANCE && !parkingFull)
-            {
-                gateIn.write(GATE_OPEN_ANGLE);
-                inState = GATE_OPEN;
-
-                return GATE_OPENED;
-            }
-
-            break;
-
-        case GATE_OPEN:
-
-            if (d > CLOSE_DISTANCE)
-            {
-                gateIn.write(GATE_CLOSE_ANGLE);
-                inState = WAIT_CAR;
-
-                return GATE_CLOSED;
-            }
-
-            break;
+      // Chờ xe đi qua
+        for (int pos = 0; pos <= GATE_ANGLE; pos++){
+            gateIn.write(pos);
+            delay(10);
+        }
+        Serial.println("Close Entrance");
     }
-
-    return GATE_NONE;
 }
 
 
-GateEvent updateExit()
-{
+void updateExit(){
+
     float d = getDistance(TRIG_OUT, ECHO_OUT);
 
-    switch (outState)
+    if (d < OPEN_DISTANCE)
     {
-        case WAIT_CAR:
+        Serial.println("Open Exit");
 
-            if (d < OPEN_DISTANCE)
-            {
-                gateOut.write(GATE_OPEN_ANGLE);
-                outState = GATE_OPEN;
+        for( int pos=0; pos< GATE_ANGLE; pos++){
+            gateOut.write(pos);
+            delay(10);
+        }
 
-                return GATE_OPENED;
-            }
+        delay(3000);
 
-            break;
-
-        case GATE_OPEN:
-
-            if (d > CLOSE_DISTANCE)
-            {
-                gateOut.write(GATE_CLOSE_ANGLE);
-                outState = WAIT_CAR;
-
-                return GATE_CLOSED;
-            }
-
-            break;
+        for (int pos = GATE_ANGLE; pos >= 0; pos--) {
+            gateOut.write(pos);
+            delay(10);
+        }
+        showGoodBye();
+        Serial.println("Close Exit");
     }
-
-    return GATE_NONE;
 }
 
 void openAllGate() {
-    gateIn.write(GATE_OPEN_ANGLE);
-    gateOut.write(GATE_OPEN_ANGLE);
+    gateIn.write(0);
+    gateOut.write(90);
 }
 
 void closeAllGate() {
-    gateIn.write(GATE_CLOSE_ANGLE);
-    gateOut.write(GATE_CLOSE_ANGLE);
+    gateIn.write(GATE_ANGLE);
+    gateOut.write(0);
 }
