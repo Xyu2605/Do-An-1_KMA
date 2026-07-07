@@ -27,22 +27,21 @@ void loop(){
         
         openAllGate();
         showFireAlarm();
+        updateLCD();
         delay(2000);
-    }
-    else {
+    } else{
+        
         if (wasFireDetected){
             closeAllGate();
         }
 
         updateEntrance(isParkingFull());
         updateExit();
-
         if (isParkingFull()){
             showParkingFull();
         }
     }
 
     wasFireDetected = fireNow;
-
     updateLCD();
 }

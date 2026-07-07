@@ -113,11 +113,11 @@ void updateLCD(){
 
         case DISPLAY_FIRE:
 
-            lcd.setCursor(0,0);
-            lcd.print(" FIRE ALARM! ");
+            lcd.setCursor(3,0);
+            lcd.print("FIRE ALARM");
 
-            lcd.setCursor(0,1);
-            lcd.print(" Exit Now!! ");
+            lcd.setCursor(3,1);
+            lcd.print("Exit Now!!");
             break;
     }
 }
