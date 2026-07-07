@@ -7,19 +7,19 @@ static bool fireDetected = false;
 void initFireAlarm(){
 
     pinMode(FIRE_SENSOR, INPUT);
-    pinMode(BUZZER, OUTPUT);
-
-    digitalWrite(BUZZER, LOW);
 }
 
-void updateFireAlarm(){
-
+void updateFireAlarm()
+{
     fireDetected = (digitalRead(FIRE_SENSOR) == LOW);
 
-    if (fireDetected){
-        digitalWrite(BUZZER, HIGH);
-    } else{
-        digitalWrite(BUZZER, LOW);
+    if (fireDetected)
+    {
+        tone(BUZZER, 1000);   
+    }
+    else
+    {
+        noTone(BUZZER);     
     }
 }
 
